@@ -27,6 +27,111 @@ Setup project with SwiftUI
 
 I** In order to use native UIKit views in SwiftUI view, you must use [UIViewRepresentable](https://developer.apple.com/documentation/swiftui/uiviewrepresentable) wrapper. The instance of custom type which adopts UIViewRepresentable protocol is responsible for creation and management a UIView object in your SwiftUI interface.
 
-     struct mapload: UIViewRepresentable {
-         ...
-     }
+```swift
+import Foundation
+import Mapbox
+import MapKit
+import SwiftUI
+
+struct MapView: UIViewRepresentable {
+    ..
+}
+```
+
+
+
+The UIViewRepresentable requires to implement makeUIViewController(context:) method that creates the instance of with the desired UIKit view. Add the following code to create map view instance
+
+```swift
+func makeUIView(context: Context) -> MGLMapView {
+        
+        
+        
+        // Build the style url
+
+        let styleURL = URL(string: "https://maps.vietmap.vn/mt/tm/style.json?apikey={your-key}")
+        
+        // create the mapview
+        let mapView = MGLMapView(frame: .zero, styleURL: styleURL)
+      
+        mapView.logoView.isHidden = true
+        mapView.attributionButton.isHidden = true
+        //10.763952501882402, 106.67257965619578
+        mapView.setCenter(
+            CLLocationCoordinate2D(latitude: 10.763952501882402, longitude: 106.67257965619578),
+            zoomLevel: 14,
+            animated: false)
+        
+        // use the coordinator only if you need
+        // to respond to the map events
+        mapView.delegate = context.coordinator
+        
+        return mapView
+    }
+    
+    func updateUIView(_ uiView: MGLMapView, context: Context) {}
+    
+    func makeCoordinator() -> MapView.Coordinator {
+        Coordinator(self)
+    }
+    
+    final class Coordinator: NSObject, MGLMapViewDelegate {
+        var control: MapView
+        
+        init(_ control: MapView) {
+            self.control = control
+            
+        }
+
+        func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
+            // write your custom code which will be executed
+            // after map has been loaded
+        }
+    }
+```
+
+The UIViewRepresentable view also requires to implement updateUIView(_:context:) which is used to configure the newly created instance. We dont need to configure anything so we will keep it empty.
+
+```swift
+ func updateUIView(_ uiView: MGLMapView, context: Context) {}
+```
+    
+## Respond to map events
+If order to to respond to map events, for example perform an action after MapView initialization finished. In SwiftUI, a Coordinator can be used with delegates, data sources, and user events. The UIViewRepresentable protocol defines makeCoordinator() method which creates coordinator instance. Add the following code to declare coordinator class:
+
+```swift
+class Coordinator: NSObject, MGLMapViewDelegate {
+        var control: MapView
+        
+        init(_ control: MapView) {
+            self.control = control
+        }
+
+        func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
+            // write your custom code which will be executed
+            // after map has been loaded
+        }
+    }
+```
+
+And then add the following method to the SwiftUI view:
+
+```swift
+func makeCoordinator() -> MapView.Coordinator {
+        Coordinator(self)
+    }
+```
+And finally set the reference coordinator on mapbox map view
+
+```swift
+    mapView.delegate = context.coordinator
+```
+
+Update ContenView
+![](./img/img_6.png)
+
+
+And Result:
+
+
+![](./img/img_phone.png)
