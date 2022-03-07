@@ -11,7 +11,7 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.mapbox.mapboxsdk.module.http.HttpRequestImpl;
 
 public class MainActivity extends AppCompatActivity {
     private MapView mapView = null;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                     mapboxMap.setStyle(new Style.Builder()
-                            .fromUri("https://maps.vietmap.vn/mt/tm/style.json?apikey={your-api-key}"));
+                            .fromUri("https://maps.vietmap.vn/mt/dm/style.json?apikey={your-api-key}"));
                     mapboxMap.getUiSettings();
 
 
